@@ -42,9 +42,9 @@
     }
 
     /* الهيدر والشعارات */
-    .brand-right img{height:60px;width:auto}
+    .brand-right img{height:56px;width:auto}
     .brand-left{padding-left:14px}
-    .brand-left img{height:30px;width:auto;opacity:.95}
+    .brand-left img{height:28px;width:auto;opacity:.95}
     .brand-left img+img{margin-right:8px}
     @media (min-width:768px){
       .brand-right img{height:62px}
@@ -201,7 +201,7 @@
         <h2 class="text-xl font-bold mb-3">باقات الرعاية (مضاعفة)</h2>
         <div class="grid md:grid-cols-4 gap-4">
           <div class="border rounded-xl p-4"><div class="font-bold">برونزية</div><div class="text-2xl font-extrabold text-brand">100,000 ر.س</div></div>
-          <div class="border rounded-xl p-4"><div class="font-bold">فضية</div><div class="text-2xl font-extrabold text-brand">300,000 ر.س</div></div>
+          <div class="border rounded-xl p-4"><div class="font-bold">فضية</div><div class="text-2xl font-extrabول text-brand">300,000 ر.س</div></div>
           <div class="border rounded-xl p-4"><div class="font-bold">ذهبية</div><div class="text-2xl font-extrabold text-brand">600,000 ر.س</div></div>
           <div class="border rounded-xl p-4"><div class="font-bold">بلاتينية</div><div class="text-2xl font-extrabold text-brand">1,500,000 ر.س</div></div>
         </div>
@@ -403,7 +403,7 @@
     setTimeout(()=>{ el.style.opacity=0; setTimeout(()=>el.classList.add('hidden'), 300); }, 2500);
   }
 
-  // Support draft (بدون الاعتماد على متغيّرات عالمية)
+  // Support draft
   const SUP_KEY='tawafuq_support_draft_v1';
   function saveSupportDraft(){
     const n = document.getElementById('supName')?.value || '';
