@@ -3,128 +3,121 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Tawāfuq | منصّة وطنية لتنظيم الخطبة وبناء قرار زواج واعٍ</title>
-  <meta name="description" content="توافق | Tawāfuq — منصّة وطنية لتنظيم الخطبة وبناء قرار زواج واعٍ عبر اختبارات توافق، تواصل شرعي بإشراف، محتوى توعوي، وإرشاد أسري." />
+  <title>توافق | Tawāfuq — منصّة وطنية لتنظيم الخطبة وبناء قرار زواج واعٍ</title>
+  <meta name="description" content="منصّة وطنية ذكية تقلّل الطلاق المبكر وترفع جودة قرار الزواج عبر اختبارات توافق، تواصل شرعي بإشراف، ومحتوى توعوي." />
 
-  <!-- Tailwind (CDN) -->
+  <!-- Tailwind via CDN -->
   <script defer src="https://cdn.tailwindcss.com"></script>
-  <!-- Icons -->
+
+  <!-- Icons & charts & utils -->
   <script defer src="https://kit.fontawesome.com/4fdf4f8e7d.js" crossorigin="anonymous"></script>
-  <!-- Charts & Utils -->
   <script defer src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script defer src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <script defer src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 
   <style>
     :root{
-      --brand:#0EA5A8;        /* Turquoise */
-      --brand-dk:#0B7C7E;     /* Dark Turquoise */
-      --sand:#E7D7C9;         /* Sand */
-      --ink:#0f172a;          /* Dark text */
-      --muted:#64748b;        /* Muted text */
-      --card:#ffffff;         /* Card bg */
-      --gray:#f1f5f9;         /* Light gray bg */
+      --brand:#0EA5A8; --brand-dk:#0B7C7E; --sand:#E7D7C9; --accent:#8B5CF6;
+      --ink:#0f172a; --muted:#64748b; --surface:#ffffff;
       --success:#16A34A; --warn:#EAB308; --danger:#DC2626;
+      --brand-50:#ECFEFF; --brand-100:#CFFAFE; --brand-700:#0B7C7E;
     }
-    body{ background:#f7fafc; color:var(--ink); }
-    .card{ background:var(--card); border:1px solid #e5e7eb; border-radius:1rem; padding:1.25rem; }
-    .chip{ display:inline-flex; align-items:center; gap:.4rem; padding:.35rem .6rem; border:1px solid #e5e7eb; border-radius:.75rem; background:#fff; }
-    .btn{ padding:.6rem 1rem; border-radius:.75rem; }
-    .btn-brand{ background:var(--brand); color:#fff; }
-    .btn-ghost{ background:#f3f4f6; }
-    .title{ color:var(--brand-dk); }
-    .muted{ color:var(--muted); }
-    .badge{ display:inline-block; padding:.25rem .5rem; border:1px solid #e5e7eb; border-radius:.5rem; font-size:.75rem; background:#fff; }
-    .hero{
-      background: radial-gradient(1200px 600px at 80% -20%, rgba(14,165,168,.12), transparent 60%),
-                  radial-gradient(900px 400px at 10% -10%, rgba(231,215,201,.35), transparent 55%);
-    }
-    /* toast */
-    #toast{ transition:opacity .25s ease; }
-    /* print */
+    body{background:#f8fafc}
+    .bg-brand{ background: var(--brand); }
+    .text-brand{ color: var(--brand); }
+    .text-brand-dk{ color: var(--brand-dk); }
+    .bg-sand{ background: var(--sand); }
+    .badge{ display:inline-block; padding:.25rem .5rem; border:1px solid #e5e7eb; border-radius:.5rem; font-size:.75rem }
+    .card{ background:#fff; border:1px solid #e5e7eb; border-radius:1.25rem; padding:1.25rem }
+    .btn{display:inline-flex;align-items:center;gap:.5rem;padding:.65rem 1rem;border-radius:.9rem;font-weight:700}
+    .btn-brand{background:var(--brand);color:#fff}
+    .btn-ghost{background:#f3f4f6}
+    .shadow-soft{box-shadow:0 10px 30px rgba(14,165,168,.15)}
+    section{scroll-margin-top:90px}
     @media print{
-      header, aside, nav, #about, #about-full, #impact, #accounts, #subs, #sponsor, #support, #kpis, #test .grid, #verify, #wali, #advisors-admin, #bookings, #governance, #policies, #terms, footer { display:none !important; }
+      header, aside, nav, #about, #accounts, #subs, #sponsor, #support, #kpis, #test .grid, #advisors-admin, #bookings, #governance, #policies, #terms, footer { display:none !important; }
       #resultsArea{ display:block !important; }
       #resultsArea .badge{ border:1px solid #000 !important; }
       body{ background:#fff; }
     }
+
+    /* الهيدر والشعارات */
+    .brand-right img{height:60px;width:auto}
+    .brand-left{padding-left:14px}
+    .brand-left img{height:30px;width:auto;opacity:.95}
+    .brand-left img+img{margin-right:8px}
+    @media (min-width:768px){
+      .brand-right img{height:62px}
+      .brand-left{padding-left:18px}
+      .brand-left img{height:34px}
+    }
+
+    /* شريط القوائم بسطر واحد */
+    .nav-links{
+      display:flex; align-items:center; gap:.25rem;
+      flex-wrap:nowrap; white-space:nowrap;
+      overflow-x:auto; overflow-y:hidden; -webkit-overflow-scrolling:touch;
+      scrollbar-width:none;
+      max-width:min(100%, 760px);
+    }
+    .nav-links::-webkit-scrollbar{display:none}
+    .nav-links a{white-space:nowrap}
   </style>
 </head>
-<body class="antialiased">
-
+<body class="bg-gray-50 text-gray-900">
   <!-- Toast -->
   <div id="toast" class="fixed bottom-4 left-1/2 -translate-x-1/2 z-50 hidden px-4 py-2 rounded-lg text-white"></div>
 
   <!-- Header -->
-  <header class="bg-white border-b sticky top-0 z-40">
-    <div class="max-w-7xl mx-auto px-4 py-4 grid grid-cols-3 items-center">
-      <!-- يمين: شعار توافق (SVG مضمّن) -->
-      <div class="flex justify-start">
-        <a href="#about" class="inline-flex items-center gap-2 group">
-          <svg width="140" height="36" viewBox="0 0 520 140" xmlns="http://www.w3.org/2000/svg" aria-label="شعار توافق">
-            <defs>
-              <linearGradient id="tg" x1="0" x2="1" y1="0" y2="1">
-                <stop offset="0" stop-color="#0EA5A8"/><stop offset="1" stop-color="#0B7C7E"/>
-              </linearGradient>
-            </defs>
-            <g fill="url(#tg)">
-              <circle cx="28" cy="70" r="20" opacity=".25"/>
-              <path d="M20 70c0-22 18-40 40-40s40 18 40 40-18 40-40 40" fill="none" stroke="url(#tg)" stroke-width="10" stroke-linecap="round"/>
-            </g>
-            <text x="110" y="83" font-family="Tajawal, system-ui" font-size="40" fill="#0B7C7E">توافق</text>
-          </svg>
-          <span class="sr-only">Tawāfuq</span>
-        </a>
+  <header class="bg-white/90 backdrop-blur border-b sticky top-0 z-40">
+    <div class="max-w-7xl mx-auto px-3 md:px-4 py-3 flex items-center justify-between gap-3">
+      <!-- يمين: شعار توافق -->
+      <a href="#about" class="brand-right order-1 flex items-center">
+        <img src="Tawafuq.logo.svg" alt="شعار توافق Tawāfuq" title="Tawāfuq" />
+      </a>
+
+      <!-- وسط: التنقّل — سطر واحد مع تمرير أفقي عند الحاجة -->
+      <nav class="order-2 nav-links text-sm text-slate-700 mx-1 md:mx-2">
+        <a href="#about" class="px-3 py-2 rounded-lg hover:bg-gray-100">عن توافق</a>
+        <a href="#accounts" class="px-3 py-2 rounded-lg hover:bg-gray-100">الحسابات</a>
+        <a href="#subs" class="px-3 py-2 rounded-lg hover:bg-gray-100">الاشتراكات</a>
+        <a href="#sponsor" class="px-3 py-2 rounded-lg hover:bg-gray-100">الرعاية</a>
+        <a href="#support" class="px-3 py-2 rounded-lg hover:bg-gray-100">الدعم</a>
+        <a href="#kpis" class="px-3 py-2 rounded-lg hover:bg-gray-100">المؤشرات</a>
+        <a href="#test" class="px-3 py-2 rounded-lg hover:bg-gray-100">اختبار التوافق</a>
+        <a href="#verify" class="px-3 py-2 rounded-lg hover:bg-gray-100">استعلام الجهات</a>
+        <a href="#wali" class="px-3 py-2 rounded-lg hover:bg-gray-100">موافقة الولي</a>
+        <a href="#advisors-admin" class="px-3 py-2 rounded-lg hover:bg-gray-100">المستشارون</a>
+        <a href="#bookings" class="px-3 py-2 rounded-lg hover:bg-gray-100">الحجوزات</a>
+        <a href="#policies" class="px-3 py-2 rounded-lg hover:bg-gray-100">الخصوصية</a>
+        <a href="#terms" class="px-3 py-2 rounded-lg hover:bg-gray-100">الشروط</a>
+      </nav>
+
+      <!-- يسار: رؤية 2030 + تلبية (أصغر من شعار توافق) مع مسافة من الحافة اليسرى -->
+      <div class="brand-left order-3 flex items-center gap-2 md:gap-3">
+        <img src="vision2030.png" alt="شعار رؤية السعودية 2030" title="Vision 2030" />
+        <img src="talbiya.png" alt="شعار مبادرة تلبية" title="Talbiya Initiative" />
       </div>
-      <!-- وسط: العنوان -->
-      <div class="text-center">
-        <div class="text-sm sm:text-base md:text-lg font-bold title">Tawāfuq | منصّة وطنية لتنظيم الخطبة وبناء قرار زواج واعٍ</div>
-        <div class="text-xs md:text-sm muted">اختبارات توافق مقنّنة • تواصل شرعي بإشراف • إرشاد أسري • محتوى توعوي</div>
-      </div>
-      <!-- يسار: رؤية 2030 + تلبية -->
-      <div class="flex justify-end items-center gap-3">
-        <img src="vision2030.png" alt="شعار رؤية 2030" class="h-9 w-auto" />
-        <img src="talbiya.png" alt="شعار مبادرة تلبية" class="h-9 w-auto" />
-      </div>
+
+      <!-- زر البدء -->
+      <a href="#subs" class="btn btn-brand shadow-soft text-sm md:ml-2"><i class="fa-solid fa-id-card ml-1"></i>ابدأ الآن</a>
     </div>
-    <!-- شريط تنقّل بسيط -->
-    <nav class="border-t">
-      <div class="max-w-7xl mx-auto px-4 py-2 text-sm flex flex-wrap gap-2">
-        <a href="#about" class="px-3 py-1 rounded-lg hover:bg-gray-50">لماذا توافق؟</a>
-        <a href="#about-full" class="px-3 py-1 rounded-lg hover:bg-gray-50">عن المنصّة</a>
-        <a href="#impact" class="px-3 py-1 rounded-lg hover:bg-gray-50">الأثر</a>
-        <a href="#accounts" class="px-3 py-1 rounded-lg hover:bg-gray-50">الحسابات والخدمات</a>
-        <a href="#subs" class="px-3 py-1 rounded-lg hover:bg-gray-50">الاشتراكات</a>
-        <a href="#sponsor" class="px-3 py-1 rounded-lg hover:bg-gray-50">باقات الرعاية</a>
-        <a href="#kpis" class="px-3 py-1 rounded-lg hover:bg-gray-50">لوحة المؤشرات</a>
-        <a href="#test" class="px-3 py-1 rounded-lg hover:bg-gray-50">اختبار التوافق</a>
-        <a href="#verify" class="px-3 py-1 rounded-lg hover:bg-gray-50">استعلام الجهات</a>
-        <a href="#wali" class="px-3 py-1 rounded-lg hover:bg-gray-50">موافقة وليّ الأمر</a>
-        <a href="#advisors-admin" class="px-3 py-1 rounded-lg hover:bg-gray-50">المستشارون</a>
-        <a href="#bookings" class="px-3 py-1 rounded-lg hover:bg-gray-50">الحجوزات</a>
-        <a href="#governance" class="px-3 py-1 rounded-lg hover:bg-gray-50">الحوكمة</a>
-        <a href="#policies" class="px-3 py-1 rounded-lg hover:bg-gray-50">الخصوصية</a>
-        <a href="#terms" class="px-3 py-1 rounded-lg hover:bg-gray-50">الشروط</a>
-      </div>
-    </nav>
   </header>
 
   <div class="max-w-7xl mx-auto px-4 py-6 grid md:grid-cols-[260px_1fr] gap-6">
     <!-- Sidebar -->
-    <aside class="bg-white border rounded-2xl p-4 h-max hidden md:block">
-      <nav class="space-y-1 text-sm" aria-label="التنقل الجانبي">
+    <aside class="bg-white border rounded-2xl p-4 h-max">
+      <nav class="space-y-1 text-sm" aria-label="التنقل الرئيسي">
         <a href="#about" class="block px-3 py-2 rounded-lg hover:bg-gray-50"><i class="fa-solid fa-circle-info ml-2"></i>عن/لماذا توافق؟</a>
-        <a href="#about-full" class="block px-3 py-2 rounded-lg hover:bg-gray-50"><i class="fa-solid fa-bullseye ml-2"></i>عن المنصّة والرؤية</a>
-        <a href="#impact" class="block px-3 py-2 rounded-lg hover:bg-gray-50"><i class="fa-solid fa-chart-column ml-2"></i>الأثر المتوقع</a>
         <a href="#accounts" class="block px-3 py-2 rounded-lg hover:bg-gray-50"><i class="fa-solid fa-users ml-2"></i>الحسابات والخدمات</a>
         <a href="#subs" class="block px-3 py-2 rounded-lg hover:bg-gray-50"><i class="fa-solid fa-id-card ml-2"></i>الاشتراكات</a>
         <a href="#sponsor" class="block px-3 py-2 rounded-lg hover:bg-gray-50"><i class="fa-solid fa-hand-holding-heart ml-2"></i>باقات الرعاية</a>
         <a href="#support" class="block px-3 py-2 rounded-lg hover:bg-gray-50"><i class="fa-solid fa-life-ring ml-2"></i>الدعم الفني</a>
         <a href="#kpis" class="block px-3 py-2 rounded-lg hover:bg-gray-50"><i class="fa-solid fa-chart-line ml-2"></i>لوحة المؤشرات</a>
-        <a href="#test" class="block px-3 py-2 rounded-lg hover:bg-gray-50"><i class="fa-solid fa-heart ml-2"></i>اختبار التوافق (30 سؤالًا)</a>
-        <a href="#verify" class="block px-3 py-2 rounded-lg hover:bg-gray-50"><i class="fa-solid fa-qrcode ml-2"></i>استعلام الجهات</a>
+        <a href="#test" class="block px-3 py-2 rounded-lg hover:bg-gray-50"><i class="fa-solid fa-heart ml-2"></i>اختبار التوافق الذكي (30 سؤالًا)</a>
+        <a href="#verify" class="block px-3 py-2 rounded-lg hover:bg-gray-50"><i class="fa-solid fa-qrcode ml-2"></i>استعلام الجهات برقم التوافق</a>
         <a href="#wali" class="block px-3 py-2 rounded-lg hover:bg-gray-50"><i class="fa-solid fa-file-signature ml-2"></i>موافقة وليّ الأمر</a>
-        <a href="#advisors-admin" class="block px-3 py-2 rounded-lg hover:bg-gray-50"><i class="fa-solid fa-user-tie ml-2"></i>إدارة المستشارين</a>
+        <a href="#advisors-admin" class="block px-3 py-2 rounded-lg hover:bg-gray-50"><i class="fa-solid fa-user-tie ml-2"></i>لوحة إدارة المستشارين</a>
         <a href="#bookings" class="block px-3 py-2 rounded-lg hover:bg-gray-50"><i class="fa-solid fa-calendar-check ml-2"></i>حجوزات الجلسات</a>
         <a href="#governance" class="block px-3 py-2 rounded-lg hover:bg-gray-50"><i class="fa-solid fa-scale-balanced ml-2"></i>الحوكمة والامتثال</a>
         <a href="#policies" class="block px-3 py-2 rounded-lg hover:bg-gray-50"><i class="fa-solid fa-shield ml-2"></i>سياسة الخصوصية</a>
@@ -135,96 +128,13 @@
     <!-- Main -->
     <main class="space-y-6">
 
-      <!-- Hero / لماذا توافق -->
-      <section id="about" class="hero card">
-        <h1 class="text-xl md:text-2xl font-extrabold mb-2 title">لماذا «توافق»؟</h1>
-        <p class="leading-7 muted">
-          «توافق | Tawāfuq» منصّة وطنية ذكية تُعين المقبلين على الزواج على اتخاذ قرار واعٍ ومستدام عبر
-          اختبار توافق مقنّن، وتواصل شرعي بإشراف، وإرشاد أسري متخصص؛ مع حماية خصوصية عالية وتكاملات حكومية موثوقة.
+      <!-- About -->
+      <section id="about" class="card">
+        <h2 class="text-xl font-bold mb-2">لماذا «توافق»؟</h2>
+        <p class="text-gray-700 leading-7">
+          «توافق | Tawāfuq» منصّة وطنية ذكية تُعين المقبلين على الزواج على اتخاذ قرار واعٍ ومستدام عبر اختبار توافق مقنّن، وتواصل شرعي منضبط، وإرشاد أسري متخصص.
+          جوهر القيمة: <span class="font-semibold">خفض الطلاق المبكر ورفع جودة قرار الزواج</span>، مع إمكانية التكامل مع بنك التنمية الاجتماعية والجهات المختصة.
         </p>
-        <div class="mt-4 flex flex-wrap gap-2 text-sm">
-          <span class="chip"><span>🔒</span> خصوصية وحوكمة عادلة</span>
-          <span class="chip"><span>📊</span> مؤشرات قابلة للقياس</span>
-          <span class="chip"><span>👨‍⚕️</span> مستشارون معتمدون</span>
-          <span class="chip"><span>🧭</span> رحلة مرشَدة وواضحة</span>
-        </div>
-      </section>
-
-      <!-- عن المنصّة | الرؤية | الرسالة | القيم | الأهداف -->
-      <section id="about-full" class="card">
-        <div class="flex flex-wrap items-center gap-2 mb-3 text-sm">
-          <span class="chip">🏳️ إحدى مبادرات برنامج شباب المملكة «حصيف» الوطني</span>
-          <span class="chip">🔐 حماية بيانات وخصوصية</span>
-        </div>
-
-        <h2 class="text-xl font-bold mb-2 title">عن المنصّة</h2>
-        <p class="text-slate-700 leading-7">
-          «توافق | Tawāfuq» منصّة وطنية ذكية تنظّم رحلة الخطبة وتدعم قرار الزواج الواعي عبر اختبارات توافق مقنّنة،
-          تواصل شرعي بإشراف، محتوى توعوي قصير، وإرشاد أسري متخصص؛ مع تكاملات حكومية للتحقق وحماية الخصوصية،
-          ضمن بيئة رقمية آمنة تعزز جودة الحياة الأسرية.
-        </p>
-
-        <div class="grid md:grid-cols-3 gap-6 mt-6">
-          <div>
-            <h3 class="font-bold text-brand-dk mb-1">الرؤية</h3>
-            <p class="text-sm text-slate-700">أن تكون «توافق» المرجع الوطني الأول لبناء أسر واثقة ومستدامة، وخفض الطلاق المبكر في المملكة.</p>
-          </div>
-          <div>
-            <h3 class="font-bold text-brand-dk mb-1">الرسالة</h3>
-            <p class="text-sm text-slate-700">تمكين المقبلين على الزواج من اتخاذ قرار واعٍ قائم على بيانات ومؤشرات عادلة، وتوفير إرشاد متخصص يحوّل نقاط الاختلاف إلى فرص للتفاهم، ضمن إطار يحترم القيم والضوابط الشرعية.</p>
-          </div>
-          <div>
-            <h3 class="font-bold text-brand-dk mb-1">القيم</h3>
-            <ul class="text-sm text-slate-700 list-disc pr-5 space-y-1">
-              <li>النزاهة والالتزام الشرعي</li>
-              <li>الخصوصية وحماية البيانات</li>
-              <li>العدالة الخوارزمية</li>
-              <li>الشراكة المجتمعية</li>
-              <li>الأثر القابل للقياس</li>
-            </ul>
-          </div>
-        </div>
-
-        <div class="mt-6">
-          <h3 class="font-bold text-brand-dk mb-1">الأهداف الاستراتيجية</h3>
-          <ul class="text-sm text-slate-700 list-disc pr-5 space-y-1">
-            <li>رفع جودة قرار الزواج لدى المستخدمين.</li>
-            <li>خفض الطلاق المبكر بين مستخدمي المنصّة.</li>
-            <li>تخفيض تعثّر تمويل الزواج لدى الشركاء عبر التأهيل المسبق.</li>
-            <li>توسيع التغطية الجغرافية والمجتمعية داخل مناطق المملكة.</li>
-            <li>تعزيز الخصوصية والحوكمة والامتثال في التشغيل والتحليل.</li>
-          </ul>
-        </div>
-      </section>
-
-      <!-- الأثر المتوقع (لوحة مصغّرة) -->
-      <section id="impact" class="card">
-        <div class="flex items-center justify-between gap-3 flex-wrap">
-          <h2 class="text-xl font-bold title">الأثر المتوقع</h2>
-          <div class="text-sm muted">قيم تمهيدية — قابلة للتحديث ببيانات فعلية</div>
-        </div>
-
-        <div class="grid md:grid-cols-3 gap-6 mt-4">
-          <div class="p-4 rounded-xl border bg-white">
-            <div class="text-sm muted">متوسط نسبة التوافق</div>
-            <div class="text-3xl font-extrabold text-brand-dk mt-1">78%</div>
-            <div class="text-xs mt-1">لعينة أولية</div>
-          </div>
-          <div class="p-4 rounded-xl border bg-white">
-            <div class="text-sm muted">رضا المستخدمين عن التقرير</div>
-            <div class="text-3xl font-extrabold text-brand-dk mt-1">86%</div>
-            <div class="text-xs mt-1">نسخة تجريبية</div>
-          </div>
-          <div class="p-4 rounded-xl border bg-white">
-            <div class="text-sm muted">جلسات الإرشاد المحجوزة</div>
-            <div class="text-3xl font-extrabold text-brand-dk mt-1">124</div>
-            <div class="text-xs mt-1">آخر 90 يومًا</div>
-          </div>
-        </div>
-
-        <div class="mt-6">
-          <canvas id="impactChart" height="110" aria-label="رسم بياني للأثر المتوقع"></canvas>
-        </div>
       </section>
 
       <!-- Accounts & Services -->
@@ -263,7 +173,7 @@
               <li>التحقق من الهوية</li>
               <li>اختبار توافق أساسي</li>
             </ul>
-            <button class="mt-3 btn btn-brand w-full" onclick="savePlan('basic')" aria-label="اشترك في الباقة الأساسية">اشترك</button>
+            <button class="mt-3 btn btn-brand w-full" onclick="savePlan('basic')">اشترك</button>
           </div>
           <div class="border rounded-xl p-4">
             <div class="font-bold">متقدّم</div>
@@ -286,7 +196,7 @@
         </div>
       </section>
 
-      <!-- Sponsors doubled -->
+      <!-- Sponsors -->
       <section id="sponsor" class="card">
         <h2 class="text-xl font-bold mb-3">باقات الرعاية (مضاعفة)</h2>
         <div class="grid md:grid-cols-4 gap-4">
@@ -301,9 +211,9 @@
       <section id="support" class="card">
         <h2 class="text-xl font-bold mb-2">الدعم الفني</h2>
         <div class="grid md:grid-cols-3 gap-3">
-          <label class="text-sm">الاسم<input id="supName" class="mt-1 w-full border rounded-lg px-3 py-2" aria-label="الاسم"/></label>
-          <label class="text-sm">البريد<input id="supMail" type="email" class="mt-1 w-full border rounded-lg px-3 py-2" aria-label="البريد"/></label>
-          <label class="text-sm md:col-span-3">الرسالة<textarea id="supMsg" class="mt-1 w-full border rounded-lg px-3 py-2" rows="3" aria-label="نص الرسالة"></textarea></label>
+          <label class="text-sm">الاسم<input id="supName" class="mt-1 w-full border rounded-lg px-3 py-2" /></label>
+          <label class="text-sm">البريد<input id="supMail" type="email" class="mt-1 w-full border rounded-lg px-3 py-2" /></label>
+          <label class="text-sm md:col-span-3">الرسالة<textarea id="supMsg" class="mt-1 w-full border rounded-lg px-3 py-2" rows="3"></textarea></label>
         </div>
         <div class="mt-3 flex gap-2">
           <button class="btn btn-brand" onclick="saveSupportDraft()">حفظ مسودة</button>
@@ -311,10 +221,10 @@
         </div>
       </section>
 
-      <!-- KPIs / Charts -->
+      <!-- KPIs -->
       <section id="kpis" class="card">
         <h2 class="text-xl font-bold mb-3">لوحة مؤشرات تشغيلية (تجريبية)</h2>
-        <canvas id="kpiChart" height="100" aria-label="مخطط مؤشرات تشغيلية"></canvas>
+        <canvas id="kpiChart" height="100"></canvas>
       </section>
 
       <!-- Smart Test 30Q -->
@@ -322,9 +232,8 @@
         <h2 class="text-xl font-bold mb-4">اختبار التوافق الذكي (30 سؤالًا)</h2>
         <div class="grid md:grid-cols-3 gap-4 mb-4">
           <label class="text-sm">الدور
-            <select id="party" class="mt-1 w-full border rounded-lg px-3 py-2" aria-label="الدور">
-              <option value="male">ذكر</option>
-              <option value="female">أنثى</option>
+            <select id="party" class="mt-1 w-full border rounded-lg px-3 py-2">
+              <option value="male">ذكر</option><option value="female">أنثى</option>
             </select>
           </label>
           <label class="text-sm">البيئة/المنطقة<input id="region" class="mt-1 w-full border rounded-lg px-3 py-2" placeholder="مثال: حائل"/></label>
@@ -333,7 +242,7 @@
           <label class="text-sm">التعليم<input id="edu" class="mt-1 w-full border rounded-lg px-3 py-2"/></label>
           <label class="text-sm">الوضع المالي<select id="fin" class="mt-1 w-full border rounded-lg px-3 py-2"><option>مستقر</option><option>متوسط</option><option>قيد التحسن</option></select></label>
         </div>
-        <div class="flex items-center gap-2 mb-3 flex-wrap">
+        <div class="flex items-center gap-2 mb-3">
           <button class="btn btn-brand" onclick="createSession()"><i class="fa-solid fa-link ml-2"></i>إنشاء جلسة</button>
           <div class="text-sm">رمز الجلسة: <span class="font-mono" id="sessCode">—</span></div>
           <div class="flex items-center gap-2"><input id="joinCode" class="border rounded-lg px-2 py-1 text-sm" placeholder="أدخل رمز جلسة"/><button class="btn btn-ghost" onclick="joinSession()">انضمام</button></div>
@@ -365,7 +274,7 @@
       <section id="verify" class="card">
         <h2 class="text-xl font-bold mb-2">استعلام الجهات برقم التوافق</h2>
         <div class="flex items-center gap-2">
-          <input id="verifyCode" class="border rounded-lg px-3 py-2" placeholder="مثال: TWFQ-AB12C-3" aria-label="رقم التوافق"/>
+          <input id="verifyCode" class="border rounded-lg px-3 py-2" placeholder="مثال: TWFQ-AB12C-3"/>
           <button class="btn btn-brand" onclick="lookupVerification()">استعلام</button>
         </div>
         <div id="verifyBox" class="mt-3 hidden"></div>
@@ -381,7 +290,7 @@
           <label class="text-sm">رقم التوافق<input id="waliCode" class="mt-1 w-full border rounded-lg px-3 py-2" placeholder="TWFQ-..."/></label>
         </div>
         <div class="border rounded-xl p-2 bg-white">
-          <canvas id="signPad" class="w-full h-40" style="background:var(--sand); border-radius:.75rem;"></canvas>
+          <canvas id="signPad" width="800" height="160" class="w-full h-40 bg-sand rounded-lg"></canvas>
         </div>
         <div class="mt-2 flex gap-2">
           <button class="btn btn-brand" onclick="saveWaliConsent()">حفظ الموافقة</button>
@@ -439,8 +348,8 @@
         </div>
 
         <div class="flex items-center gap-2 mb-6">
-          <button class="btn btn-brand" onclick="addBooking()"><i class="fa-solid fa-check ml-2"></i>تأكيد الحجز</button>
-          <button class="btn btn-ghost" onclick="seedBookings()">تعبئة أمثلة</button>
+          <button class="px-4 py-2 bg-brand text-white rounded-lg" onclick="addBooking()"><i class="fa-solid fa-check ml-2"></i>تأكيد الحجز</button>
+          <button class="px-4 py-2 bg-gray-100 rounded-lg" onclick="seedBookings()">تعبئة أمثلة</button>
         </div>
 
         <div class="overflow-auto">
@@ -470,7 +379,7 @@
       <!-- Policies & Terms -->
       <section id="policies" class="card">
         <h2 class="text-xl font-bold mb-2">سياسة الخصوصية (مختصر)</h2>
-        <p class="text-sm text-gray-700">توضح هذه السياسة كيفية معالجة بيانات المستخدمين، مع التزام كامل باللوائح ذات الصلة داخل المملكة. تتم عملية التحقق عبر قنوات حكومية، وتُستخدم البيانات لأغراض تشغيلية وإحصائية بعد إخفاء الهوية.</p>
+        <p class="text-sm text-gray-700">توضح هذه السياسة كيفية معالجة بيانات المستخدمين، مع التزام كامل باللوائح داخل المملكة. تتم عملية التحقق عبر قنوات حكومية، وتُستخدم البيانات لأغراض تشغيلية وإحصائية بعد إخفاء الهوية.</p>
       </section>
       <section id="terms" class="card">
         <h2 class="text-xl font-bold mb-2">الشروط والأحكام (مختصر)</h2>
@@ -483,35 +392,58 @@
     </main>
   </div>
 
-  <!-- سكربت التطبيق -->
+  <!-- App Script -->
   <script>
-  // --- Toast helper ---
+  // Toast
   function notify(type, msg){
     const el = document.getElementById('toast');
     const bg = type==='ok' ? 'bg-green-600' : type==='warn' ? 'bg-yellow-600' : 'bg-red-600';
-    el.className = \`fixed bottom-4 left-1/2 -translate-x-1/2 z-50 px-4 py-2 rounded-lg text-white \${bg}\`;
+    el.className = `fixed bottom-4 left-1/2 -translate-x-1/2 z-50 px-4 py-2 rounded-lg text-white ${bg}`;
     el.textContent = msg; el.style.opacity=1; el.classList.remove('hidden');
     setTimeout(()=>{ el.style.opacity=0; setTimeout(()=>el.classList.add('hidden'), 300); }, 2500);
   }
 
-  // --- LocalStorage helpers ---
+  // Support draft (بدون الاعتماد على متغيّرات عالمية)
+  const SUP_KEY='tawafuq_support_draft_v1';
+  function saveSupportDraft(){
+    const n = document.getElementById('supName')?.value || '';
+    const m = document.getElementById('supMail')?.value || '';
+    const t = document.getElementById('supMsg')?.value || '';
+    localStorage.setItem(SUP_KEY, JSON.stringify({n,m,t}));
+    notify('ok','تم حفظ المسودة');
+  }
+  function clearSupportDraft(){
+    localStorage.removeItem(SUP_KEY);
+    const n = document.getElementById('supName'), m=document.getElementById('supMail'), t=document.getElementById('supMsg');
+    if(n) n.value=''; if(m) m.value=''; if(t) t.value='';
+    notify('ok','تم المسح');
+  }
+  function restoreSupportDraft(){
+    try{
+      const o=JSON.parse(localStorage.getItem(SUP_KEY)||'{}');
+      const n = document.getElementById('supName'), m=document.getElementById('supMail'), t=document.getElementById('supMsg');
+      if(n && o.n) n.value=o.n; if(m && o.m) m.value=o.m; if(t && o.t) t.value=o.t;
+    }catch(e){}
+  }
+
+  // Subscriptions
   const PLAN_KEY='tawafuq_plan';
   function savePlan(name){ localStorage.setItem(PLAN_KEY, name); notify('ok','تم حفظ الباقة: '+name); }
 
-  // Support draft
-  const SUP_KEY='tawafuq_support_draft_v1';
-  function saveSupportDraft(){ const o={n:supName.value,m:supMail.value,t:supMsg.value}; localStorage.setItem(SUP_KEY, JSON.stringify(o)); notify('ok','تم حفظ المسودة'); }
-  function clearSupportDraft(){ localStorage.removeItem(SUP_KEY); supName.value=''; supMail.value=''; supMsg.value=''; notify('ok','تم المسح'); }
-  function restoreSupportDraft(){ try{ const o=JSON.parse(localStorage.getItem(SUP_KEY)||'{}'); if(o.n) supName.value=o.n; if(o.m) supMail.value=o.m; if(o.t) supMsg.value=o.t; }catch(e){} }
-
-  // --- Advisors Admin (Local) ---
+  // Advisors Admin
   const ADV_KEY='tawafuq_advisors_v1';
   function loadAdvisors(){ try{ return JSON.parse(localStorage.getItem(ADV_KEY))||[] }catch(e){ return [] } }
   function saveAdvisors(x){ localStorage.setItem(ADV_KEY, JSON.stringify(x)); }
   function addAdvisor(){
-    const a={ name:advName.value||'مستشار', spec:advSpec.value||'أسري', slots:advSlots.value||'الأحد 6–9', approved: advApproved.value==='1' };
+    const a={ 
+      name:(document.getElementById('advName')?.value||'مستشار'), 
+      spec:(document.getElementById('advSpec')?.value||'أسري'),
+      slots:(document.getElementById('advSlots')?.value||'الأحد 6–9'),
+      approved:(document.getElementById('advApproved')?.value==='1')
+    };
     const list=loadAdvisors(); list.push(a); saveAdvisors(list); renderAdvisors(); notify('ok','تمت الإضافة');
-    advName.value=''; advSpec.value=''; advSlots.value=''; advApproved.value='0';
+    const n=document.getElementById('advName'), s=document.getElementById('advSpec'), sl=document.getElementById('advSlots'), ap=document.getElementById('advApproved');
+    if(n) n.value=''; if(s) s.value=''; if(sl) sl.value=''; if(ap) ap.value='0';
   }
   function deleteAdvisor(i){ const list=loadAdvisors(); list.splice(i,1); saveAdvisors(list); renderAdvisors(); }
   function seedAdvisors(){ const demo=[
@@ -523,66 +455,69 @@
     const body=document.getElementById('advTable'); if(!body) return;
     const list=loadAdvisors(); let html='';
     list.forEach((a,i)=>{
-      html+=\`<tr class="border-b"><td class="py-2">\${i+1}</td><td>\${a.name}</td><td>\${a.spec}</td><td>\${a.slots}</td><td>\${a.approved?'معتمد':'قيد المراجعة'}</td><td><button class="px-2 py-1 text-xs border rounded-lg text-red-700" onclick="deleteAdvisor(\${i})">حذف</button></td></tr>\`;
+      html+=`<tr class="border-b"><td class="py-2">${i+1}</td><td>${a.name}</td><td>${a.spec}</td><td>${a.slots}</td><td>${a.approved?'معتمد':'قيد المراجعة'}</td><td><button class="px-2 py-1 text-xs border rounded-lg text-red-700" onclick="deleteAdvisor(${i})">حذف</button></td></tr>`;
     });
     body.innerHTML=html;
   }
 
-  // ===== Bookings Logic =====
-  var BK_KEY = 'tawafuq_bookings_v1';
+  // Bookings
+  const BK_KEY = 'tawafuq_bookings_v1';
   function loadBookings(){ try { return JSON.parse(localStorage.getItem(BK_KEY)) || []; } catch(e){ return []; } }
   function saveBookings(list){ localStorage.setItem(BK_KEY, JSON.stringify(list)); }
   function rebuildAdvisorSelect(){
-    var sel = document.getElementById('bkAdvisor'); if(!sel) return;
-    var list = loadAdvisors(); var html='';
-    for(var i=0;i<list.length;i++){
-      var a=list[i]; html += '<option value="'+i+'">'+a.name+' – '+a.spec+' ('+(a.approved? 'معتمد':'قيد المراجعة')+')</option>';
+    const sel = document.getElementById('bkAdvisor'); if(!sel) return;
+    const list = loadAdvisors(); let html='';
+    for(let i=0;i<list.length;i++){
+      const a=list[i]; html += '<option value="'+i+'">'+a.name+' – '+a.spec+' ('+(a.approved? 'معتمد':'قيد المراجعة')+')</option>';
     }
     sel.innerHTML = html; rebuildTimeSlots();
   }
   function parseSlotsToOptions(slots){
     if(!slots) return [];
-    var first = String(slots).split('|')[0] || '';
-    var m = first.match(/([0-9]+)\s*–\s*([0-9]+)/);
-    var s = m? parseInt(m[1]): 6; var e = m? parseInt(m[2]): 9; var out=[];
-    for(var h=s; h<e; h++){ out.push(h+':00'); out.push(h+':30'); }
+    const first = String(slots).split('|')[0] || '';
+    const m = first.match(/([0-9]+)\s*–\s*([0-9]+)/);
+    const s = m? parseInt(m[1]): 6; const e = m? parseInt(m[2]): 9; const out=[];
+    for(let h=s; h<e; h++){ out.push(h+':00'); out.push(h+':30'); }
     return out;
   }
   function rebuildTimeSlots(){
-    var timeSel = document.getElementById('bkTime'); if(!timeSel) return;
-    var advSel = document.getElementById('bkAdvisor'); var list = loadAdvisors();
-    var adv = list[advSel && advSel.value ? parseInt(advSel.value) : 0];
-    var opts = parseSlotsToOptions(adv? adv.slots: ''); var html='';
-    for(var i=0;i<opts.length;i++){ html += '<option value="'+opts[i]+'">'+opts[i]+'</option>'; }
+    const timeSel = document.getElementById('bkTime'); if(!timeSel) return;
+    const advSel = document.getElementById('bkAdvisor');
+    const list = loadAdvisors();
+    const adv = list[advSel && advSel.value ? parseInt(advSel.value) : 0];
+    const opts = parseSlotsToOptions(adv? adv.slots: ''); let html='';
+    for(let i=0;i<opts.length;i++){ html += '<option value="'+opts[i]+'">'+opts[i]+'</option>'; }
     timeSel.innerHTML = html;
   }
   function uid(){ return 'BK-' + Math.random().toString(36).slice(2,8).toUpperCase(); }
   function addBooking(){
-    var advIdx = parseInt((document.getElementById('bkAdvisor')||{}).value||0);
-    var list = loadAdvisors(); var adv = list[advIdx];
+    const advIdx = parseInt((document.getElementById('bkAdvisor')||{}).value||0);
+    const list = loadAdvisors(); const adv = list[advIdx];
     if(!adv){ notify('err','أضف مستشارًا أولًا من لوحة إدارة المستشارين.'); return; }
-    var type = (document.getElementById('bkType')||{}).value;
-    var date = (document.getElementById('bkDate')||{}).value;
-    var time = (document.getElementById('bkTime')||{}).value;
-    var notes = (document.getElementById('bkNotes')||{}).value||'';
+    const type = (document.getElementById('bkType')||{}).value;
+    const date = (document.getElementById('bkDate')||{}).value;
+    const time = (document.getElementById('bkTime')||{}).value;
+    const notes = (document.getElementById('bkNotes')||{}).value||'';
     if(!date || !time){ notify('warn','اختر التاريخ والوقت.'); return; }
-    var rec = { id: uid(), advisor: adv.name, spec: adv.spec, type: type, date: date, time: time, notes: notes, status: adv.approved? 'مؤكد' : 'بانتظار الاعتماد' };
-    var B = loadBookings(); B.push(rec); saveBookings(B); renderBookings();
+    const rec = { id: uid(), advisor: adv.name, spec: adv.spec, type, date, time, notes, status: adv.approved? 'مؤكد' : 'بانتظار الاعتماد' };
+    const B = loadBookings(); B.push(rec); saveBookings(B); renderBookings();
     try { bookingPDF(rec); } catch(e){}
     notify('ok','تم إنشاء الحجز وإصدار PDF');
   }
   function renderBookings(){
-    var body = document.getElementById('bkTable'); if(!body) return;
-    var B = loadBookings(); var html='';
-    for(var i=0;i<B.length;i++){
-      var r=B[i];
+    const body = document.getElementById('bkTable'); if(!body) return;
+    const B = loadBookings(); let html='';
+    for(let i=0;i<B.length;i++){
+      const r=B[i];
       html += '<tr class="border-b">'
         +'<td class="py-2 font-mono">'+r.id+'</td>'
         +'<td>'+r.advisor+' <span class="text-gray-400">('+r.spec+')</span></td>'
         +'<td>'+r.type+'</td>'
         +'<td>'+r.date+'</td>'
         +'<td>'+r.time+'</td>'
-        +'<td>'+(r.status==='مؤكد' ? '<span class="badge" style="background:var(--sand); color:var(--brand-dk)">مؤكد</span>' : '<span class="badge">بانتظار</span>')+'</td>'
+        +'<td>'+(r.status==='مؤكد'
+              ?'<span class="badge bg-sand text-brand-dk">مؤكد</span>'
+              :'<span class="badge">بانتظار</span>')+'</td>'
         +'<td class="space-x-2 space-x-reverse">'
           +'<button class="px-2 py-1 text-xs border rounded-lg" onclick="bookingPDFByIndex('+i+')">PDF</button>'
           +'<button class="px-2 py-1 text-xs border rounded-lg text-red-700" onclick="deleteBooking('+i+')">حذف</button>'
@@ -591,11 +526,11 @@
     }
     body.innerHTML = html; rebuildAdvisorSelect();
   }
-  function deleteBooking(i){ var B=loadBookings(); B.splice(i,1); saveBookings(B); renderBookings(); }
-  function bookingPDFByIndex(i){ var B=loadBookings(); var rec=B[i]; if(rec) bookingPDF(rec); }
+  function deleteBooking(i){ const B=loadBookings(); B.splice(i,1); saveBookings(B); renderBookings(); }
+  function bookingPDFByIndex(i){ const B=loadBookings(); const rec=B[i]; if(rec) bookingPDF(rec); }
   function bookingPDF(rec){
-    var jsPDF = window.jspdf.jsPDF; var doc = new jsPDF('p','pt','a4');
-    var y=48; doc.setFont('helvetica','bold'); doc.setFontSize(18);
+    const jsPDF = window.jspdf.jsPDF; const doc = new jsPDF('p','pt','a4');
+    let y=48; doc.setFont('helvetica','bold'); doc.setFontSize(18);
     doc.text('تأكيد حجز جلسة – Tawāfuq Session Confirmation', 48, y); y+=24;
     doc.setFontSize(12); doc.setFont('helvetica','');
     doc.text('رقم الحجز: '+rec.id, 48, y); y+=16;
@@ -608,34 +543,39 @@
   }
   function seedBookings(){
     if(loadAdvisors().length===0) seedAdvisors();
-    var a=loadAdvisors();
-    var demo=[
-      {id: uid(), advisor: (a[0]||{name:'أ. هدى'}).name, spec: 'أسري', type:'استشارة أسرية 30 دقيقة', date: new Date().toISOString().slice(0,10), time:'7:30', notes:'', status:'مؤكد'},
-      {id: uid(), advisor: (a[1]||{name:'د. مازن'}).name, spec: 'نفسي', type:'استشارة نفسية 45 دقيقة', date: new Date(Date.now()+86400000).toISOString().slice(0,10), time:'6:00', notes:'', status:'بانتظار'}
+    const a=loadAdvisors();
+    const demo=[
+      {id: uid(), advisor: (a[0]||{name:'أ. هدى'}).name, spec:'أسري', type:'استشارة أسرية 30 دقيقة', date:new Date().toISOString().slice(0,10), time:'07:30', notes:'', status:'مؤكد'},
+      {id: uid(), advisor: (a[1]||{name:'د. مازن'}).name, spec:'نفسي', type:'استشارة نفسية 45 دقيقة', date:new Date(Date.now()+86400000).toISOString().slice(0,10), time:'06:00', notes:'', status:'بانتظار'}
     ]; saveBookings(demo); renderBookings();
   }
 
-  // --- KPI Chart (demo) ---
+  // KPI
   function renderKPI(){
     if(!window.Chart) return;
     const ctx=document.getElementById('kpiChart'); if(!ctx) return;
-    const data={ labels:['جلسات','اختبارات','نسبة توافق متوسطة','مدن'], datasets:[{ label:'مؤشرات', data:[loadBookings().length, 3, 78, 5] }] };
+    const data={ labels:['جلسات','اختبارات','توافق متوسط','مدن'], datasets:[{ label:'مؤشرات', data:[loadBookings().length, 3, 78, 5], backgroundColor:'rgba(14,165,168,0.5)' }] };
     new Chart(ctx,{ type:'bar', data, options:{ responsive:true, plugins:{legend:{display:false}} } });
   }
 
-  // --- Smart Test Session ---
-  const SESS_KEY='tawafuq_sessions_v3'; // sessions by code
+  // Sessions
+  const SESS_KEY='tawafuq_sessions_v3';
   function loadSessions(){ try{ return JSON.parse(localStorage.getItem(SESS_KEY))||{} }catch(e){ return {} } }
   function saveSessions(o){ localStorage.setItem(SESS_KEY, JSON.stringify(o)); }
-
   function genBase(){ const chars='ABCDEFGHJKLMNPQRSTUVWXYZ23456789'; let s=''; for(let i=0;i<5;i++){ s+=chars[Math.floor(Math.random()*chars.length)] } return s }
-  function genCode(){ const base=genBase(); let sum=0; for(const ch of base){ sum+=ch.charCodeAt(0) } const chk=(sum%7).toString(); return \`TWFQ-\${base}-\${chk}\` }
+  function genCode(){ const base=genBase(); let sum=0; for(const ch of base){ sum+=ch.charCodeAt(0) } const chk=(sum%7).toString(); return `TWFQ-${base}-${chk}` }
   function validCodeFormat(code){ return /^TWFQ\-[A-Z0-9]{5}\-\d$/.test(code||'') }
 
   let currentCode=null, currentParty=null;
   function createSession(){
     currentParty = document.getElementById('party').value;
-    const meta = { region:region.value||'', religion:religion.value||'', age:parseInt(age.value||'0'), edu:edu.value||'', fin:fin.value||'' };
+    const meta = {
+      region:document.getElementById('region').value||'',
+      religion:document.getElementById('religion').value||'',
+      age:parseInt(document.getElementById('age').value||'0'),
+      edu:document.getElementById('edu').value||'',
+      fin:document.getElementById('fin').value||''
+    };
     const code=genCode(); const sessions=loadSessions();
     sessions[code] = sessions[code]||{ male:null, female:null, meta:{} };
     sessions[code].meta[currentParty]=meta; saveSessions(sessions);
@@ -659,30 +599,20 @@
     {key:'comm', title:'التواصل', weight:0.20},
   ];
   const BANK={
-    values:[
-      'أهمية الالتزام الديني في الحياة اليومية', 'أولوية الصدق والشفافية في العلاقة', 'دور الأسرة الممتدة في اتخاذ القرارات', 'التمسك بالعادات والتقاليد', 'المرونة تجاه اختلاف وجهات النظر الدينية', 'العمل التطوعي كقيمة مشتركة'
-    ],
-    goals:[
-      'الرغبة في إنجاب الأطفال خلال أول عامين', 'أولوية الاستقرار السكني قبل الإنجاب', 'التطلع للدراسات العليا بعد الزواج', 'الطموح المهني لكلا الطرفين', 'الادخار لهدف طويل المدى', 'السفر والاستكشاف كأسلوب حياة'
-    ],
-    traits:[
-      'القدرة على ضبط النفس عند الخلاف', 'التسامح بعد الاعتذار', 'المرونة في تغيير الخطط', 'الانفتاح على تجارب جديدة', 'الدقة في المواعيد', 'حب النظام والترتيب'
-    ],
-    finance:[
-      'تقسيم المصاريف بشكل متساوٍ', 'قبول الميزانية الشهرية والانضباط بها', 'تفضيل الادخار على الاستهلاك', 'الاستعداد للشفافية المالية الكاملة', 'تقاسم إدارة أموال الأسرة', 'الأولويات في الهدايا والرفاه'
-    ],
-    comm:[
-      'حوار يومي لا يقل عن 15 دقيقة', 'تقبّل النقد البنّاء', 'الاعتذار السريع عند الخطأ', 'التعبير عن المشاعر بانتظام', 'تفضيل حل الخلاف في نفس اليوم', 'عدم إدخال أطراف خارجية مبكرًا'
-    ]
+    values:[ 'أهمية الالتزام الديني في الحياة اليومية','أولوية الصدق والشفافية في العلاقة','دور الأسرة الممتدة في اتخاذ القرارات','التمسك بالعادات والتقاليد','المرونة تجاه اختلاف وجهات النظر الدينية','العمل التطوعي كقيمة مشتركة'],
+    goals:[ 'الرغبة في إنجاب الأطفال خلال أول عامين','أولوية الاستقرار السكني قبل الإنجاب','التطلع للدراسات العليا بعد الزواج','الطموح المهني لكلا الطرفين','الادخار لهدف طويل المدى','السفر والاستكشاف كأسلوب حياة'],
+    traits:[ 'القدرة على ضبط النفس عند الخلاف','التسامح بعد الاعتذار','المرونة في تغيير الخطط','الانفتاح على تجارب جديدة','الدقة في المواعيد','حب النظام والترتيب'],
+    finance:['تقسيم المصاريف بشكل متساوٍ','قبول الميزانية الشهرية والانضباط بها','تفضيل الادخار على الاستهلاك','الاستعداد للشفافية المالية الكاملة','تقاسم إدارة أموال الأسرة','الأولويات في الهدايا والرفاه'],
+    comm:[   'حوار يومي لا يقل عن 15 دقيقة','تقبّل النقد البنّاء','الاعتذار السريع عند الخطأ','التعبير عن المشاعر بانتظام','تفضيل حل الخلاف في نفس اليوم','عدم إدخال أطراف خارجية مبكرًا']
   };
 
   function buildQuestions(){
     const box=document.getElementById('questions'); if(!box) return; box.innerHTML='';
     let i=0; AXES.forEach(ax=>{
       BANK[ax.key].forEach(q=>{
-        i++; const id=\`q_\${ax.key}_\${i}\`;
+        i++; const id=`q_${ax.key}_${i}`;
         const wrap=document.createElement('label'); wrap.className='text-sm block'; wrap.setAttribute('for', id);
-        wrap.innerHTML = \`\${i}. \${q}<select id="\${id}" class="mt-1 w-full border rounded-lg px-3 py-2"><option value="">— اختر —</option><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option></select>\`;
+        wrap.innerHTML = `${i}. ${q}<select id="${id}" class="mt-1 w-full border rounded-lg px-3 py-2"><option value="">— اختر —</option><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option></select>`;
         box.appendChild(wrap);
       })
     });
@@ -705,28 +635,34 @@
   function gatherAnswers(){
     const box=document.getElementById('questions'); const answers={}; let valid=true;
     AXES.forEach(ax=>{ answers[ax.key]=[]; });
-    box.querySelectorAll('select').forEach(s=>{ if(!s.value) valid=false; const [_,key]=s.id.split('_'); answers[key].push(parseInt(s.value)); });
+    box.querySelectorAll('select').forEach(s=>{
+      if(!s.value) valid=false;
+      const parts=s.id.split('_'); const key=parts[1];
+      answers[key].push(parseInt(s.value));
+    });
     return {answers, valid};
   }
 
-  function computeAxisScore(arr){ if(!arr.length) return 0; const sum=arr.reduce((a,b)=>a+b,0); const max=arr.length*5; return Math.round((sum/max)*100); }
-  function similarityScore(a1,a2){ const len=Math.min(a1.length, a2.length); let sim=0; for(let i=0;i<len;i++){ sim += 1 - (Math.abs(a1[i]-a2[i])/4); } return Math.round((sim/len)*100); }
-
-  function demoSimilarity(m,f){
-    if(!m||!f) return 0; let s=0, n=0;
-    if(m.age && f.age){ const d=Math.abs(m.age-f.age); s += (d<=3?100:(d<=6?70:40)); n++; }
-    if(m.edu && f.edu){ s += (m.edu===f.edu?100:60); n++; }
-    if(m.region && f.region){ s += (m.region===f.region?100:70); n++; }
-    if(m.religion && f.religion){ s += (m.religion===f.religion?100:60); n++; }
-    if(m.fin && f.fin){ s += (m.fin===f.fin?100:70); n++; }
-    return Math.round(s/Math.max(n,1));
+  function similarityScore(a1,a2){
+    const len=Math.min(a1.length, a2.length); let sim=0;
+    for(let i=0;i<len;i++){ sim += 1 - (Math.abs(a1[i]-a2[i])/4); }
+    return Math.round((sim/len)*100);
   }
 
   function submitAnswers(){
     if(!currentCode||!currentParty) return notify('warn','أنشئ أو انضم إلى جلسة أولًا');
     const {answers, valid}=gatherAnswers(); if(!valid) return notify('warn','أكمل جميع الإجابات');
     const sessions=loadSessions(); const S=sessions[currentCode]||{ male:null, female:null, meta:{} };
-    const pack={ answers, meta:{ region:region.value, religion:religion.value, age:parseInt(age.value||'0'), edu:edu.value, fin:fin.value } };
+    const pack={ 
+      answers, 
+      meta:{
+        region:document.getElementById('region').value,
+        religion:document.getElementById('religion').value,
+        age:parseInt(document.getElementById('age').value||'0'),
+        edu:document.getElementById('edu').value,
+        fin:document.getElementById('fin').value
+      } 
+    };
     S[currentParty]=pack; sessions[currentCode]=S; saveSessions(sessions);
 
     if(S.male && S.female){
@@ -745,6 +681,16 @@
     }
   }
 
+  function demoSimilarity(m,f){
+    if(!m||!f) return 0; let s=0, n=0;
+    if(m.age && f.age){ const d=Math.abs(m.age-f.age); s += (d<=3?100:(d<=6?70:40)); n++; }
+    if(m.edu && f.edu){ s += (m.edu===f.edu?100:60); n++; }
+    if(m.region && f.region){ s += (m.region===f.region?100:70); n++; }
+    if(m.religion && f.religion){ s += (m.religion===f.religion?100:60); n++; }
+    if(m.fin && f.fin){ s += (m.fin===f.fin?100:70); n++; }
+    return Math.round(s/Math.max(n,1));
+  }
+
   function showResults(final, axis){
     const code = currentCode; const date=new Date().toLocaleDateString('ar-SA');
     document.getElementById('resultsArea').classList.remove('hidden');
@@ -752,7 +698,7 @@
     document.getElementById('compatCode').textContent=code;
     document.getElementById('compatDate').textContent=date;
     const mapTitle={values:'القيم', goals:'الأهداف', traits:'السمات', finance:'المال', comm:'التواصل'};
-    let html=''; Object.keys(axis).forEach(k=>{ html+=\`<div class="badge">\${mapTitle[k]}: \${axis[k]}%</div> \` });
+    let html=''; Object.keys(axis).forEach(k=>{ html+=`<div class="badge">${mapTitle[k]}: ${axis[k]}%</div> ` });
     document.getElementById('axisBreakdown').innerHTML=html;
 
     const qrBox=document.getElementById('qrContainer'); qrBox.innerHTML='';
@@ -784,22 +730,25 @@
     doc.save('Tawafuq_Certificate_'+code+'.pdf');
   }
 
-  // Verify lookup
+  // Verify
   function lookupVerification(){
     const code=(document.getElementById('verifyCode').value||'').trim().toUpperCase();
     const box=document.getElementById('verifyBox'); box.classList.remove('hidden');
-    if(!/^TWFQ\-[A-Z0-9]{5}\-\d$/.test(code||'')){ box.innerHTML='<div class="text-red-700">صيغة الرقم غير صحيحة.</div>'; return; }
+    if(!validCodeFormat(code)){ box.innerHTML='<div class="text-red-700">صيغة الرقم غير صحيحة.</div>'; return; }
     const S=loadSessions()[code]; if(!S||!S.male||!S.female){ box.innerHTML='<div class="text-yellow-700">لا تتوفر بيانات مكتملة لهذا الرقم.</div>'; return; }
     const axis={}; let total=0; AXES.forEach(ax=>{ const sim=similarityScore(S.male.answers[ax.key], S.female.answers[ax.key]); axis[ax.key]=sim; total+=sim*ax.weight; });
     const dm=demoSimilarity(S.male.meta,S.female.meta); const final=Math.round(total*0.75+dm*0.25);
     const mapTitle={values:'القيم', goals:'الأهداف', traits:'السمات', finance:'المال', comm:'التواصل'};
-    let badges=''; Object.keys(axis).forEach(k=>{ badges+=\`<span class="badge">\${mapTitle[k]}: \${axis[k]}%</span> \`; });
-    box.innerHTML = \`<div class="p-3 bg-white border rounded-xl"><div class="text-lg font-bold text-brand">\${final}%</div><div class="mt-2">\${badges}</div><div class="text-xs text-gray-500 mt-2">نتيجة محسوبة محليًا (تجريبي)</div></div>\`;
+    let badges=''; Object.keys(axis).forEach(k=>{ badges+=`<span class="badge">${mapTitle[k]}: ${axis[k]}%</span> `; });
+    box.innerHTML = `<div class="p-3 bg-white border rounded-xl"><div class="text-lg font-bold text-brand">${final}%</div><div class="mt-2">${badges}</div><div class="text-xs text-gray-500 mt-2">نتيجة محسوبة محليًا (تجريبي)</div></div>`;
   }
 
-  // Wali consent signature
+  // Signature pad
   let drawing=false;
-  function signInit(){ const c=document.getElementById('signPad'); if(!c) return; const ctx=c.getContext('2d'); ctx.strokeStyle='#000'; ctx.lineWidth=2; function pos(e){ const r=c.getBoundingClientRect(); const x=(e.touches?e.touches[0].clientX:e.clientX)-r.left; const y=(e.touches?e.touches[0].clientY:e.clientY)-r.top; return {x,y}; }
+  function signInit(){
+    const c=document.getElementById('signPad'); if(!c) return;
+    const ctx=c.getContext('2d'); ctx.strokeStyle='#000'; ctx.lineWidth=2;
+    function pos(e){ const r=c.getBoundingClientRect(); const x=(e.touches?e.touches[0].clientX:e.clientX)-r.left; const y=(e.touches?e.touches[0].clientY:e.clientY)-r.top; return {x,y}; }
     c.addEventListener('mousedown',e=>{drawing=true; const p=pos(e); ctx.beginPath(); ctx.moveTo(p.x,p.y)});
     c.addEventListener('mousemove',e=>{ if(!drawing) return; const p=pos(e); ctx.lineTo(p.x,p.y); ctx.stroke(); });
     window.addEventListener('mouseup',()=>drawing=false);
@@ -807,40 +756,21 @@
     c.addEventListener('touchmove',e=>{ if(!drawing) return; const p=pos(e); ctx.lineTo(p.x,p.y); ctx.stroke(); });
     window.addEventListener('touchend',()=>drawing=false);
   }
-  function clearSign(){ const c=document.getElementById('signPad'); const ctx=c.getContext('2d'); ctx.clearRect(0,0,c.width,c.height); }
+  function clearSign(){ const c=document.getElementById('signPad'); if(!c) return; const ctx=c.getContext('2d'); ctx.clearRect(0,0,c.width,c.height); }
   function saveWaliConsent(){
-    const name=waliName.value||''; const nat=waliNat.value||''; const code=(waliCode.value||'').toUpperCase();
-    if(!name||!nat||!/^(TWFQ\-[A-Z0-9]{5}\-\d)$/.test(code)) return notify('warn','أكمل البيانات وتحقق من صيغة الرقم');
+    const name=document.getElementById('waliName').value||''; 
+    const nat=document.getElementById('waliNat').value||''; 
+    const code=(document.getElementById('waliCode').value||'').toUpperCase();
+    if(!name||!nat||!validCodeFormat(code)) return notify('warn','أكمل البيانات وتحقق من صيغة الرقم');
     const S=loadSessions(); if(!S[code]) return notify('err','رقم توافق غير موجود');
     const c=document.getElementById('signPad'); const png=c.toDataURL('image/png');
     S[code].wali={ name, nat, sign: png, at: new Date().toISOString() }; saveSessions(S);
     document.getElementById('waliMsg').textContent='تم حفظ موافقة وليّ الأمر.'; notify('ok','حُفظت الموافقة');
   }
 
-  // Impact chart
-  function renderImpact(){
-    const el = document.getElementById('impactChart');
-    if(!el || !window.Chart) return;
-    new Chart(el.getContext('2d'), {
-      type: 'bar',
-      data: {
-        labels: ['التوافق', 'رضا التقرير', 'حجوزات/100'],
-        datasets: [{ label: 'الأثر المتوقع', data: [78, 86, 62], borderWidth: 1 }]
-      },
-      options: {
-        responsive: true, maintainAspectRatio: false,
-        plugins:{ legend:{ display:false } },
-        scales: {
-          y: { beginAtZero: true, ticks:{ stepSize: 20, color:'#334155' }, grid:{ color:'#e2e8f0' } },
-          x: { ticks:{ color:'#334155' }, grid:{ display:false } }
-        }
-      }
-    });
-  }
-
   // Init
   document.addEventListener('DOMContentLoaded',function(){
-    restoreSupportDraft(); renderAdvisors(); rebuildAdvisorSelect(); renderBookings(); renderKPI(); signInit(); renderImpact();
+    restoreSupportDraft(); renderAdvisors(); rebuildAdvisorSelect(); renderBookings(); renderKPI(); signInit();
   });
   </script>
 </body>
